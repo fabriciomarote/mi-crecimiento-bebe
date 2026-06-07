@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#353262">
+    <title>D&iacute;a de Beb&eacute;</title>
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="icon" href="icon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="brand">
+          <img src="icon.svg" alt="" class="brand-icon">
+          <div>
+            <h1>D&iacute;a de Beb&eacute;</h1>
+            <p id="todayLabel"></p>
+          </div>
+        </div>
+        <span id="syncStatus" class="sync-status">Conectando</span>
+      </header>
+
+      <nav class="tabs" aria-label="Secciones">
+        <button class="tab-button active" type="button" data-view="log">Anotar</button>
+        <button class="tab-button" type="button" data-view="day">Dia</button>
+        <button class="tab-button" type="button" data-view="week">Semana</button>
+        <button class="tab-button" type="button" data-view="month">Mes</button>
+        <button class="tab-button" type="button" data-view="appointments">Turnos</button>
+        <button class="tab-button" type="button" data-view="profile">Perfil</button>
+        <button class="tab-button" type="button" data-view="alerts">Alertas</button>
+      </nav>
+
+      <main class="views">
+        <section class="view-panel quick-panel active" data-view-panel="log" aria-labelledby="quickTitle">
+          <div class="section-head">
+            <h2 id="quickTitle">Registrar</h2>
+            <input id="entryDate" type="date" aria-label="Dia del registro">
+          </div>
+
+          <div class="type-grid" role="tablist" aria-label="Tipo de registro">
+            <button class="type-button active" type="button" data-type="bottle" role="tab" aria-selected="true">
+              <span class="type-icon">ml</span>
+              <span>Mamadera</span>
+            </button>
+            <button class="type-button" type="button" data-type="food" role="tab" aria-selected="false">
+              <span class="type-icon">F</span>
+              <span>Comida</span>
+            </button>
+            <button class="type-button" type="button" data-type="diaper" role="tab" aria-selected="false">
+              <span class="type-icon">P</span>
+              <span>Pa&ntilde;al</span>
+            </button>
+            <button class="type-button" type="button" data-type="sleep" role="tab" aria-selected="false">
+              <span class="type-icon">Zz</span>
+              <span>Siesta</span>
+            </button>
+            <button class="type-button" type="button" data-type="care" role="tab" aria-selected="false">
+              <span class="type-icon">C</span>
+              <span>Cuidado</span>
+            </button>
+          </div>
+
+          <form id="entryForm" class="entry-form">
+            <input id="editingId" type="hidden">
+            <div class="form-row two">
+              <label>
+                Hora
+                <input id="entryTime" type="time" step="60" required>
+              </label>
+              <label id="amountWrap">
+                Cantidad
+                <div class="amount-line">
+                  <input id="amount" type="number" min="1" max="400" step="1" inputmode="numeric">
+                  <span id="amountUnit">ml</span>
+                </div>
+              </label>
+            </div>
+
+            <div id="foodFields" class="field-set hidden">
+              <label>
+                Comida
+                <input id="foodName" type="text" maxlength="80" placeholder="Ej: pure, fruta, papilla">
+              </label>
+            </div>
+
+            <div id="diaperFields" class="field-set hidden">
+              <label>
+                Tipo
+                <select id="diaperType">
+                  <option value="pis">Pis</option>
+                  <option value="caca">Caca</option>
+                  <option value="mixto">Pis y caca</option>
+                  <option value="seco">Seco</option>
+                </select>
+              </label>
+            </div>
+
+            <div id="sleepFields" class="field-set hidden">
+              <div class="form-row two">
+                <label>
+                  Inicio
+                  <input id="sleepStart" type="time" step="60">
+                </label>
+                <label>
+                  Fin
+                  <input id="sleepEnd" type="time" step="60">
+                </label>
+              </div>
+            </div>
+
+            <div id="careFields" class="field-set hidden">
+              <div class="check-grid">
+                <label class="check-card">
+                  <input id="vitamin" type="checkbox">
+                  <span>Vitamina</span>
+                </label>
+                <label class="check-card">
+                  <input id="bath" type="checkbox">
+                  <span>Ba&ntilde;o</span>
+                </label>
+              </div>
+            </div>
+
+            <label>
+              Nota
+              <textarea id="note" rows="3" maxlength="180" placeholder="Opcional"></textarea>
+            </label>
+
+            <div class="form-actions">
+              <button class="primary" type="submit" id="saveButton">Guardar</button>
+              <button class="ghost hidden" type="button" id="cancelEdit">Cancelar</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="view-panel dashboard-panel" data-view-panel="day" aria-labelledby="summaryTitle">
+          <div class="section-head">
+            <h2 id="summaryTitle">Dashboard del dia</h2>
+            <div class="day-nav">
+              <button type="button" class="icon-button" id="prevDay" aria-label="Dia anterior">&lt;</button>
+              <button type="button" class="icon-button" id="todayButton">Hoy</button>
+              <button type="button" class="icon-button" id="nextDay" aria-label="Dia siguiente">&gt;</button>
+            </div>
+          </div>
+
+          <div class="stats-grid">
+            <article class="stat-card">
+              <span>Mamaderas</span>
+              <strong id="bottleCount">0</strong>
+              <small id="bottleTotal">0 ml</small>
+            </article>
+            <article class="stat-card">
+              <span>Comidas</span>
+              <strong id="foodCount">0</strong>
+              <small id="foodList">-</small>
+            </article>
+            <article class="stat-card">
+              <span>Pa&ntilde;ales</span>
+              <strong id="diaperCount">0</strong>
+              <small id="diaperMix">-</small>
+            </article>
+            <article class="stat-card">
+              <span>Sue&ntilde;o</span>
+              <strong id="sleepTotal">0 h</strong>
+              <small id="sleepCount">0 siestas</small>
+            </article>
+            <article class="stat-card">
+              <span>Cuidado</span>
+              <strong id="careDone">0/2</strong>
+              <small id="careList">-</small>
+            </article>
+          </div>
+
+          <div id="dayChart" class="chart-card"></div>
+
+          <div class="timeline-head">
+            <h3>Registro del dia</h3>
+            <div class="data-actions">
+              <button type="button" class="small-button" id="refreshData">Actualizar</button>
+              <button type="button" class="small-button" id="exportData">Exportar</button>
+              <label class="small-button import-button">
+                Importar
+                <input id="importData" type="file" accept="application/json">
+              </label>
+            </div>
+          </div>
+
+          <ol id="timeline" class="timeline"></ol>
+          <div id="emptyState" class="empty-state">
+            <strong>Sin registros</strong>
+            <span>Agrega el primer evento del dia.</span>
+          </div>
+        </section>
+
+        <section class="view-panel dashboard-panel" data-view-panel="week" aria-labelledby="weekTitle">
+          <div class="section-head">
+            <h2 id="weekTitle">Dashboard semanal</h2>
+            <span id="weekRange" class="range-chip"></span>
+          </div>
+          <div id="weekStats" class="stats-grid compact"></div>
+          <div id="weekChart" class="chart-card"></div>
+          <div id="weekRows" class="history-rows"></div>
+        </section>
+
+        <section class="view-panel dashboard-panel" data-view-panel="month" aria-labelledby="monthTitle">
+          <div class="section-head">
+            <h2 id="monthTitle">Dashboard mensual</h2>
+            <span id="monthRange" class="range-chip"></span>
+          </div>
+          <div id="monthStats" class="stats-grid compact"></div>
+          <div id="monthChart" class="chart-card"></div>
+          <div id="monthRows" class="history-rows"></div>
+        </section>
+
+        <section class="view-panel appointments-panel" data-view-panel="appointments" aria-labelledby="appointmentsTitle">
+          <div class="section-head">
+            <h2 id="appointmentsTitle">Turnos</h2>
+            <div class="day-nav">
+              <button type="button" class="icon-button" id="prevAppointmentsMonth" aria-label="Mes anterior">&lt;</button>
+              <span id="appointmentsMonthLabel" class="range-chip"></span>
+              <button type="button" class="icon-button" id="nextAppointmentsMonth" aria-label="Mes siguiente">&gt;</button>
+            </div>
+          </div>
+
+          <form id="appointmentForm" class="appointment-form">
+            <div class="form-row three">
+              <label>
+                Fecha
+                <input id="appointmentDate" type="date" required>
+              </label>
+              <label>
+                Hora
+                <input id="appointmentTime" type="time" step="60" required>
+              </label>
+              <label>
+                Especialidad
+                <input id="appointmentSpecialty" type="text" maxlength="80" placeholder="Ej: pediatria" required>
+              </label>
+            </div>
+            <button class="primary" type="submit">Agregar turno</button>
+          </form>
+
+          <div id="appointmentsCalendar" class="calendar-grid"></div>
+          <div class="timeline-head">
+            <h3>Pr&oacute;ximos turnos</h3>
+          </div>
+          <div id="appointmentsList" class="appointments-list"></div>
+        </section>
+
+        <section class="view-panel profile-panel" data-view-panel="profile" aria-labelledby="profileTitle">
+          <form id="profileForm" class="profile-form">
+            <div class="section-head">
+              <h2 id="profileTitle">Perfil</h2>
+            </div>
+
+            <label>
+              Nombre
+              <input id="profileName" type="text" maxlength="28" autocomplete="off" placeholder="Nombre">
+            </label>
+
+            <div class="form-row two">
+              <label>
+                Edad
+                <input id="profileAge" type="text" maxlength="24" placeholder="Ej: 3 meses">
+              </label>
+              <label>
+                Peso
+                <input id="profileWeight" type="text" maxlength="24" placeholder="Ej: 5.8 kg">
+              </label>
+            </div>
+
+            <div class="profile-facts">
+              <span id="profileAgeText">Edad: -</span>
+              <span id="profileWeightText">Peso: -</span>
+            </div>
+          </form>
+        </section>
+
+        <section class="view-panel alerts-panel" data-view-panel="alerts" aria-labelledby="alertsTitle">
+          <div class="section-head">
+            <h2 id="alertsTitle">Alertas</h2>
+            <button type="button" class="small-button" id="requestNotifications">Permiso</button>
+          </div>
+
+          <form id="alertsForm" class="alerts-form">
+            <label class="check-card alert-toggle">
+              <input id="bottleAlertEnabled" type="checkbox">
+              <span>Mamadera</span>
+            </label>
+            <div class="form-row two">
+              <label>
+                Cada
+                <input id="bottleAlertMinutes" type="number" min="10" max="600" step="5" inputmode="numeric">
+              </label>
+              <label>
+                Pr&oacute;xima
+                <input id="nextBottleAt" type="text" readonly>
+              </label>
+            </div>
+
+            <label class="check-card alert-toggle">
+              <input id="diaperAlertEnabled" type="checkbox">
+              <span>Revisar pa&ntilde;al</span>
+            </label>
+            <div class="form-row two">
+              <label>
+                Cada
+                <input id="diaperAlertMinutes" type="number" min="10" max="600" step="5" inputmode="numeric">
+              </label>
+              <label>
+                Pr&oacute;xima
+                <input id="nextDiaperAt" type="text" readonly>
+              </label>
+            </div>
+          </form>
+
+          <div class="alert-state" id="notificationState">Notificaciones pendientes</div>
+        </section>
+      </main>
+    </div>
+
+    <script src="client.js"></script>
+  </body>
+</html>

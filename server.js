@@ -4,7 +4,7 @@ const os = require("os");
 const path = require("path");
 const stateHandler = require("./api/state");
 
-const root = __dirname;
+const root = path.join(__dirname, "public");
 const port = Number(process.env.PORT || 4173);
 const host = process.env.HOST || "0.0.0.0";
 

@@ -31,6 +31,7 @@ http://127.0.0.1:4173
 
 La API `/api/state` usa PostgreSQL y crea las tablas automaticamente con `schema.sql` si no existen.
 No se guardan datos en `localStorage` ni en archivos JSON locales.
+Los archivos estaticos de la app estan en `public/`.
 
 ## Tablas principales
 
