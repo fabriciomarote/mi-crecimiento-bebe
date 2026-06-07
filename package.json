@@ -1,0 +1,12 @@
+{
+  "name": "dia-de-bebe",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node server.js",
+    "check": "node --check server.js && node --check api/state.js && node --check lib/db.js && node --check app.js"
+  },
+  "dependencies": {
+    "pg": "^8.13.1"
+  }
+}

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Día de Bebé">
+  <rect width="128" height="128" rx="28" fill="#fff7fb"/>
+  <circle cx="64" cy="58" r="35" fill="#ffaadb" stroke="#bf53a0" stroke-width="5"/>
+  <circle cx="50" cy="54" r="5" fill="#1e2522"/>
+  <circle cx="78" cy="54" r="5" fill="#1e2522"/>
+  <path d="M51 73c8 8 18 8 26 0" fill="none" stroke="#1e2522" stroke-width="5" stroke-linecap="round"/>
+  <path d="M36 35c4-12 16-20 28-20s24 8 28 20" fill="none" stroke="#ff79bf" stroke-width="8" stroke-linecap="round"/>
+  <path d="M35 92h58c8 0 14 6 14 14v4H21v-4c0-8 6-14 14-14z" fill="#6e3d80"/>
+</svg>
